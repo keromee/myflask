@@ -1,0 +1,9 @@
+libs:
+mariadb
+mariadb-server
+MySQL-python
+flask-admin
+flask_script
+flask-SQLAlchemy
+flask-babel
+flask_babelex

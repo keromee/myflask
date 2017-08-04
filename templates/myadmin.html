@@ -1,0 +1,58 @@
+{% extends 'admin/master.html' %}
+ <link rel="stylesheet" href="{{ url_for('static', filename='/admin/css/*.css') }}" />
+{% block body %}
+	<div id="content-main" class="inner-two-columns colM row-fluid">
+		<form class="form-horizontal" id="list_form" action="/admin/user/" method="GET" enctype="multipart/form-data"  novalidate>
+			<fieldset class="module aligned first ">
+				{% with foo = cols %}
+					<div class="control-group form-row">
+						<div>
+							<div class="control-label center">
+								<label id ="number" class="required"  placeholder='请填写' style="vertical-align: middle;">{{ foo[0] }}:</label>
+							</div>
+							<div class="controls">
+								<select multiple="" class="filtered"  id="regular" name="account_type">
+									{% with foo = digits %}
+										{% for i in foo %}
+											<option value="" selected="selected">{{ i }}</option>
+										{% endfor %}
+									{% endwith %}
+								</select>
+							</div>
+						</div>
+					</div>
+				      	
+					  <div class="control-group form-row  ">
+						<div>
+							<div class="control-label">
+								<label id ="spacing" class="required" placeholder='请填写'>{{ foo[1] }}:</label>
+							</div>
+							<div class="controls">
+								<input class="vTextField"  maxlength="45" name="manager_pwd" type="text" value="" required="">
+							</div>
+						 </div>
+				      	</div>
+
+					<div class="control-group form-row ">
+						<div>
+							<div class="control-label">
+								<label class="required" placeholder='请填写'>{{ foo[2] }}:</label>
+							</div>
+							<div class="controls">
+								<input class="vTextField" maxlength="45" name="manager_name" type="date" value="" required="">
+							</div>
+						</div>
+					</div>
+					<div class="control-group form-row ">
+						<div>
+							<div class="controls">
+								<input type="submit"   size="40" name="q" value="保存" class="btn btn-info btn-high object-tools">
+							</div>
+						</div>
+					</div>
+				{% endwith %}
+
+			</fieldset>
+		</form>
+	</div>
+{% endblock %}
