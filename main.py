@@ -64,16 +64,21 @@ class MyUserView(ModelView):
         if not request.json:
             abort(400)
         info = jsonify({'code':True,'msg': 'OK'})
-        print '====',request.json
+        print '==!!==',request.json
         try:
             user = request.json.get('username','')
             pwd = request.json.get('password','')
             style = request.json.get('payment','')
             invite = request.json.get('invite','')
-            if not user and pwd :
-                raise ValueError, u'不可用的参数'
+            # if not user and not pwd :
+            #     raise ValueError, u'不可用的参数'
 
-            vals = User(user, style, pwd,  invite)
+            print "===dadad"
+            vals = User(username=user, payment=style, password=pwd,  invite=invite)
+            print vals
+
+            if vals is None:
+                info = jsonify({'code':False,'error': 'not create'})
             db.session.add(vals)
             db.session.commit()
         except Exception, e:
@@ -109,7 +114,8 @@ class MyBettingView(ModelView):
             chip = request.json.get('chip','')
             ray = request.json.get('Raise',0)
 
-            vals = Betting()
+            man = User.query.filter_by(username=user).first()
+            vals = Betting(chip=chip,Raise=ray,user_id=man.id)
             db.session.add(vals)
             db.session.commit()
         except Exception, e:
@@ -167,6 +173,7 @@ class AnotherAdminView(BaseView):
                 raise ValueError, u'不可用的参数'
 
             vals = User.query.filter_by(username=user,password=pwd).first()
+            print "------------=====", req
             if vals is None:
                 info = jsonify({'code':False,'error': 'Not found'})
         except Exception, e:
@@ -178,16 +185,21 @@ class AnotherAdminView(BaseView):
         if not request.json:
             abort(400)
         info = jsonify({'code':True,'msg': 'OK'})
-        print '====',request.json
+        print '==!!==',request.json
         try:
             user = request.json.get('username','')
             pwd = request.json.get('password','')
             style = request.json.get('payment','')
             invite = request.json.get('invite','')
-            if not user and pwd :
-                raise ValueError, u'不可用的参数'
+            # if not user and not pwd :
+            #     raise ValueError, u'不可用的参数'
 
+            print "===dadad"
             vals = User(user, style, pwd,  invite)
+            print vals
+
+            if vals is None:
+                info = jsonify({'code':False,'error': 'not create'})
             db.session.add(vals)
             db.session.commit()
         except Exception, e:

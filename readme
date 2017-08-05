@@ -7,3 +7,13 @@ flask_script
 flask-SQLAlchemy
 flask-babel
 flask_babelex
+Flask_wtf
+Flask-Migrate
+	初始化
+	python app.py db init
+
+	数据迁移，自动创建迁移代码
+	python app.py db migrate
+	
+	更新数据库
+	python app.py db upgrade
