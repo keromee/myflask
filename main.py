@@ -5,7 +5,7 @@ from flask import url_for, jsonify, abort, request, make_response, render_templa
 from flask_sqlalchemy import SQLAlchemy
 from flask_admin.contrib.sqla import ModelView
 from init import *
-from models import User, Betting, Lottery
+from models import User, Betting, Lottery, Recode
 from flask_admin import Admin, BaseView, expose,AdminIndexView
 from json import loads,dumps
 from forms import ChipForm
@@ -73,17 +73,20 @@ class MyUserView(ModelView):
             # if not user and not pwd :
             #     raise ValueError, u'不可用的参数'
 
-            print "===dadad"
-            vals = User(username=user, payment=style, password=pwd,  invite=invite)
-            print vals
+            print "===dadad", type(user.encode('utf-8')), type("哟哟")
+            vals = User(username=user.encode('utf-8'), payment=style, password=pwd,  invite=invite)
+            print "===ffff",vals
 
             if vals is None:
                 info = jsonify({'code':False,'error': 'not create'})
+
             db.session.add(vals)
             db.session.commit()
+            db.session.rollback()
         except Exception, e:
-            import sys
-            return  jsonify({'code':False,'error': 400})
+            db.session.rollback()
+            info = jsonify({'code':False,'error': 400})
+            return info
         return info
 
 class MyBettingView(ModelView):
@@ -119,7 +122,9 @@ class MyBettingView(ModelView):
             db.session.add(vals)
             db.session.commit()
         except Exception, e:
-            return  jsonify({'code':False,'error': 400})
+            db.session.rollback()
+            info = jsonify({'code':False,'error': 400})
+            return info
         return info  
 
     @expose('/api/v1.0/histroy', methods=['POST'])
@@ -129,10 +134,10 @@ class MyBettingView(ModelView):
         info = jsonify({'code':True,'msg': 'OK'})
         try:
             user = request.json.get('username','')
-            v1 = User.query.filter_by(username= user).first()
+            v1 = User.query.filter_by(username=user).first()
 
+            
             v2 = Betting.query.filter_by(user_id=v1.id).first()
-            print v2, v1.id
             info = jsonify({'code':True,'msg': 'OK','value':v2.chip})
         except Exception, e:
             return  jsonify({'code':False,'error': 400})
@@ -149,6 +154,50 @@ class MyLotteryView(ModelView):
     # can_create = False
     column_list = ('id', 'number' , 'times','dates')
 
+    @expose('/api/v1.0/Lottery', methods=['GET'])
+    def set_time(self):
+        info = jsonify({'code':True,'msg': 'OK'})
+        try:
+            res = db.session.query(Lottery.number,Lottery.times,db.func.max(Lottery.dates).label('ml')).first()
+            print res
+            info = jsonify({'code':True,'msg': 'OK','value':res})
+        except Exception, e:
+            db.session.rollback()
+            info = jsonify({'code':False,'error': 400})
+            return info
+        return info  
+
+
+class MyRecodeview(ModelView):
+    column_labels = {
+    'id':u'序号',
+    'state':u'上/下分',
+    'cost':u'金 额',
+    'user2':u'关 联'
+    }
+
+    column_list = ('id', 'user2' , 'cost','state')
+
+    @expose('/api/v1.0/Recode', methods=['POST'])
+    def create_task(self):
+        if not request.json:
+            abort(400)
+        info = jsonify({'code':True,'msg': 'OK'})
+        print '!!!!',request.json
+        try:
+            user = request.json.get('username','')
+            cost = request.json.get('cost',0.0)
+            state = request.json.get('state',False)
+
+            man = User.query.filter_by(username=user).first()
+            vals = Recode(cost=cost,state=state,user_id=man.id)
+            db.session.add(vals)
+            db.session.commit()
+        except Exception, e:
+            db.session.rollback()
+            info = jsonify({'code':False,'error': 400})
+            return info
+        return info
 
 class AnotherAdminView(BaseView):
     @expose('/')
@@ -256,6 +305,7 @@ admin = Admin(
 admin.add_view(MyUserView(User, db.session, name=u'用户'))
 admin.add_view(MyBettingView(Betting, db.session, name=u'注码记录'))
 admin.add_view(MyLotteryView(Lottery, db.session, name=u'开奖设置'))
+admin.add_view(MyRecodeview(Recode, db.session, name=u'充值记录'))
 
 # admin.init_app(app)
 

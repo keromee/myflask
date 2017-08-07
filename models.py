@@ -6,20 +6,20 @@ class User(db.Model):
     username 	帐号
     payment	支付宝 / 微信
     password 	密码
-    addition 	附加码
     invite 		邀请码
+    point       积分
     '''
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(80), unique=True)
     payment = db.Column(db.String(80), unique=True)
     password = db.Column(db.String(32), nullable=False)
-    addition = db.Column(db.String(80))
     invite = db.Column(db.String(80))
+    point = db.Column(db.Integer, nullable=True)
     # model1 = db.relationship('Betting', foreign_keys='UserNote.user_id',backref='user', lazy="dynamic") 
 
     def __repr__(self):
-        return self.username
+        return '%s' % self.username
 
 
 class Betting(db.Model):
@@ -42,8 +42,8 @@ class Betting(db.Model):
     #     super(Betting, self).__init__(**kwargs)
         # inline_models = [('bettinglist', dict(form_columns=['user_id']))]
 
-    def __repr__(self):
-        return self.user_id.username
+    # def __repr__(self):
+    #     return self.user_id
 
 
 class Lottery(db.Model):
@@ -62,3 +62,15 @@ class Lottery(db.Model):
         return '<Number %r>' % self.number
 
 # db.event.listen(Lottery.number, 'set', Lottery.on_changed_body)
+
+class Recode(db.Model):
+    '''
+    state   true /false 上下分:充值和取现
+    cost    操作金额
+    '''
+    __tablename__ = 'recodes'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    state = db.Column(db.Boolean,default=False)
+    cost = db.Column(db.Float, default=0.0)
+    user2 = db.relationship(User,foreign_keys='Recode.user_id', backref=db.backref('user2', order_by=id))
