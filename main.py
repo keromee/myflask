@@ -44,7 +44,7 @@ class MyUserView(ModelView):
         print '+++++++++++',request
         if not request.json:
             abort(400)
-        info = jsonify({'code':True,'msg': 'OK'})
+        info = {}
         
         try:
             user = request.json.get('username','')
@@ -55,6 +55,8 @@ class MyUserView(ModelView):
             vals = User.query.filter_by(username=user,password=pwd).first()
             if vals is None:
                 info = jsonify({'code':False,'error': 'Not found'})
+            else:
+                info = jsonify({'code':True,'msg': 'OK', 'value':vals.point})
         except Exception, e:
             return  jsonify({'code':False,'error': 400})
         return info
