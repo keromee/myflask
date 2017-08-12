@@ -31,12 +31,13 @@ class MyAdminView(BaseView):
 
 class MyUserView(ModelView):
     can_create = False
-    column_list = ('id', 'username' , 'password', 'invite')
+    column_list = ('id', 'username' , 'password', 'invite', 'point')
     column_labels = {'id':u'序号',
         'username' : u'用户名',
         'password' : u'密 码',
         'payment':u'支付宝/微信',
-        'invite':u'邀请码'
+        'invite':u'邀请码',
+        'point':u'积 分',
         }
 
     @expose('/api/v1.0/login', methods=['POST'])
@@ -118,8 +119,10 @@ class MyBettingView(ModelView):
             user = request.json.get('username','')
             chip = request.json.get('chip','')
             ray = request.json.get('Raise',0)
+            point = request.json.get('point',0)
 
             man = User.query.filter_by(username=user).first()
+            man.point = point
             vals = Betting(chip=chip,Raise=ray,user_id=man.id)
             db.session.add(vals)
             db.session.commit()
@@ -127,7 +130,31 @@ class MyBettingView(ModelView):
             db.session.rollback()
             info = jsonify({'code':False,'error': 400})
             return info
-        return info  
+        return info
+
+    @expose('/api/v1.0/Betting_query', methods=['POST'])
+    def Betting_query(self):
+        if not request.json:
+            abort(400)
+        info = jsonify({'code':True,'msg': 'OK'})
+        print '!!!!',request.json
+        try:
+            user = request.json.get('username','')
+            chip = request.json.get('chip','')
+            ray = request.json.get('Raise',0)
+            point = request.json.get('point',0)
+
+            man = User.query.filter_by(username=user).first()
+            man.point = point
+            vals = Betting.query.filter_by(user_id=man.id).first()
+            if vals is None:
+                info = jsonify({'code':False,'error': 'Not found'})
+            else:
+                info = jsonify({'code':True,'msg': 'OK', 'value':vals})
+        except Exception, e:
+            info = jsonify({'code':False,'error': 400})
+            return info
+        return info
 
     @expose('/api/v1.0/histroy', methods=['POST'])
     def show_histroy(self):

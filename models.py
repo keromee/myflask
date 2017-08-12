@@ -15,7 +15,7 @@ class User(db.Model):
     payment = db.Column(db.String(80), unique=True)
     password = db.Column(db.String(32), nullable=False)
     invite = db.Column(db.String(80))
-    point = db.Column(db.Integer, nullable=True)
+    point = db.Column(db.Integer, default=0)
     # model1 = db.relationship('Betting', foreign_keys='UserNote.user_id',backref='user', lazy="dynamic") 
 
     def __repr__(self):
