@@ -102,7 +102,7 @@ class MyBettingView(ModelView):
     'user':u'关联'
     }
     can_create = False
-    column_list = ('id', 'user' , 'chip' , 'Raise', )
+    column_list = ('id', 'user' , 'chip' , 'Raise', 'check')
 
     # @expose('/', methods=['GET', 'POST'])
     # def index(self):
@@ -137,21 +137,19 @@ class MyBettingView(ModelView):
         if not request.json:
             abort(400)
         info = jsonify({'code':True,'msg': 'OK'})
-        print '!!!!',request.json
         try:
             user = request.json.get('username','')
-            chip = request.json.get('chip','')
-            ray = request.json.get('Raise',0)
-            point = request.json.get('point',0)
-
             man = User.query.filter_by(username=user).first()
-            man.point = point
             vals = Betting.query.filter_by(user_id=man.id).first()
             if vals is None:
                 info = jsonify({'code':False,'error': 'Not found'})
             else:
-                info = jsonify({'code':True,'msg': 'OK', 'value':vals})
+                info = jsonify({'code':True,'msg': 'OK', 'point':man.point, 'value':vals.Raise})
+            # vals.check = True
+            # db.session.add(vals)
+            # db.session.commit()
         except Exception, e:
+            # db.session.rollback()
             info = jsonify({'code':False,'error': 400})
             return info
         return info

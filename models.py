@@ -28,12 +28,14 @@ class Betting(db.Model):
     user_id 外键User表
     chip 需要下注的数字筹码，list
     Raise 注码
+    check 是否已经结帐
     '''
     __tablename__ = 'bettinglist'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     chip = db.Column(db.String(80), nullable=False)
     Raise = db.Column(db.Integer, nullable=False)
+    check = db.Column(db.Boolean,default=False)
     user = db.relationship(User,
                            foreign_keys='Betting.user_id',
                            backref=db.backref('user', order_by=id))
