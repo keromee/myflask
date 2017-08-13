@@ -237,10 +237,12 @@ class MyRecodeview(ModelView):
                 if _sub <0:
                     info = jsonify({'code':False,'error': "只能下：%d分" % man.point})
                     return info
+                man.point = _sub
             vals = Recode(cost=cost,state=state,user_id=man.id)
             db.session.add(vals)
             db.session.add(man)
             db.session.commit()
+            info = jsonify({'code':True,'msg': 'OK','score':man.point})
         except Exception, e:
             db.session.rollback()
             info = jsonify({'code':False,'error': 400})
