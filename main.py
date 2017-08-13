@@ -230,8 +230,10 @@ class MyRecodeview(ModelView):
             state = request.json.get('state',False)
 
             man = User.query.filter_by(username=user).first()
+            man.point += int(cost)
             vals = Recode(cost=cost,state=state,user_id=man.id)
             db.session.add(vals)
+            db.session.add(man)
             db.session.commit()
         except Exception, e:
             db.session.rollback()

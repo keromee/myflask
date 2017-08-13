@@ -74,5 +74,5 @@ class Recode(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     state = db.Column(db.Boolean,default=False)
-    cost = db.Column(db.Float, default=0.0)
+    cost = db.Column(db.Integer, default=0)
     user2 = db.relationship(User,foreign_keys='Recode.user_id', backref=db.backref('user2', order_by=id))
