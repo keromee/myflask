@@ -230,7 +230,13 @@ class MyRecodeview(ModelView):
             state = request.json.get('state',False)
 
             man = User.query.filter_by(username=user).first()
-            man.point += int(cost)
+            if state:
+                man.point += int(cost)
+            else:
+                _sub= man.point - int(cost) 
+                if _sub <0:
+                    info = jsonify({'code':False,'error': "只能下：%d分" % man.point})
+                    return info
             vals = Recode(cost=cost,state=state,user_id=man.id)
             db.session.add(vals)
             db.session.add(man)
