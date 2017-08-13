@@ -50,9 +50,9 @@ class Betting(db.Model):
 
 class Lottery(db.Model):
     '''
-    Number    奖号
-    times       开奖间隔时间  PS=分钟为单位
-    dates       固定开奖时间  PS=当有固定开奖时间时，忽略times
+    Number  奖号
+    times   开奖间隔时间  PS=分钟为单位
+    dates   固定开奖时间  PS=当有固定开奖时间时，忽略times
     '''
     __tablename__ = 'lottery'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)

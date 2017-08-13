@@ -154,21 +154,21 @@ class MyBettingView(ModelView):
             return info
         return info
 
-    @expose('/api/v1.0/histroy', methods=['POST'])
-    def show_histroy(self):
-        if not request.json:
-            abort(400)
-        info = jsonify({'code':True,'msg': 'OK'})
-        try:
-            user = request.json.get('username','')
-            v1 = User.query.filter_by(username=user).first()
+    # @expose('/api/v1.0/histroy', methods=['POST'])
+    # def show_histroy(self):
+    #     if not request.json:
+    #         abort(400)
+    #     info = jsonify({'code':True,'msg': 'OK'})
+    #     try:
+    #         user = request.json.get('username','')
+    #         v1 = User.query.filter_by(username=user).first()
 
             
-            v2 = Betting.query.filter_by(user_id=v1.id).first()
-            info = jsonify({'code':True,'msg': 'OK','value':v2.chip})
-        except Exception, e:
-            return  jsonify({'code':False,'error': 400})
-        return info 
+    #         v2 = Betting.query.filter_by(user_id=v1.id).first()
+    #         info = jsonify({'code':True,'msg': 'OK','value':v2.chip})
+    #     except Exception, e:
+    #         return  jsonify({'code':False,'error': 400})
+    #     return info 
 
 
 class MyLotteryView(ModelView):
@@ -192,7 +192,20 @@ class MyLotteryView(ModelView):
             db.session.rollback()
             info = jsonify({'code':False,'error': 400})
             return info
-        return info  
+        return info
+
+    @expose('/api/v1.0/histroy', methods=['GET'])
+    def show_histroy(self):
+        info = jsonify({'code':True,'msg': 'OK'})
+        try:
+            # v = Lottery.query.all()
+            # db.session.query(Lottery.number).all()
+            v = Lottery.query.with_entities(Lottery.number).all()
+            info = jsonify({'code':True,'msg': 'OK','value':['%d' % i[0] for i in v]})
+            print '==-=-=-=',info
+        except Exception, e:
+            return  jsonify({'code':False,'error': 400})
+        return info 
 
 
 class MyRecodeview(ModelView):
