@@ -7,7 +7,6 @@ from flask_babelex import Babel
 from flask_migrate import Migrate, MigrateCommand
 
 # Create flask app
-# 创建一个commit，用于测试
 app = Flask(__name__, template_folder='templates')
 app.debug = True
 
