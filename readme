@@ -1,4 +1,5 @@
 libs:
+这里可以使用required.txt
 mariadb
 mariadb-server
 MySQL-python
